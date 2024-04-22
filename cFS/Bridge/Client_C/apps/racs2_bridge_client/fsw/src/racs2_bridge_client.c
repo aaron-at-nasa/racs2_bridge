@@ -73,12 +73,13 @@ static int callback_example( struct lws *wsi, enum lws_callback_reasons reason, 
 			lwsl_user( "[Recv]: data len = %d\n", len ) ;
             
             // === send message =========================
-            char *hello = "Hello";
-            if (!strncmp((char*)in, hello, 1)) 
-            {
-                // OS_printf("[Recv]: %s\n", (char*)in);
-                break;
-            }
+            /* why is this here?*/
+            // char *hello = "Hello";
+            // if (!strncmp((char*)in, hello, 1))
+            // {
+            //     // OS_printf("[Recv]: %s\n", (char*)in);
+            //     break;
+            // }
             // Get message ID from header
             uint16_t id_seg1 = ((uint8_t*)in)[0];
             uint16_t id_seg2 = ((uint8_t*)in)[1];
@@ -124,7 +125,9 @@ static int callback_example( struct lws *wsi, enum lws_callback_reasons reason, 
             if (g_is_bridge_msg_sent)
             {
                 pthread_mutex_lock(&g_bridge_msg_flag_mutex);
-                lws_write( wsi, g_bridge_msg_pkt, BRIDGE_HEADER_LNGTH+BODY_DATA_MAX_LNGTH, LWS_WRITE_TEXT );
+                /* This needs to be LWS_WRITE_BINARY for general purpose cFS packets */
+                // lws_write( wsi, g_bridge_msg_pkt, BRIDGE_HEADER_LNGTH+BODY_DATA_MAX_LNGTH, LWS_WRITE_TEXT );
+                lws_write( wsi, g_bridge_msg_pkt, BRIDGE_HEADER_LNGTH+BODY_DATA_MAX_LNGTH, LWS_WRITE_BINARY );
                 pthread_mutex_unlock(&g_bridge_msg_flag_mutex);
             }
             pthread_mutex_lock(&g_bridge_msg_flag_mutex);
